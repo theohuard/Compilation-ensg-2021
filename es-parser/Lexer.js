@@ -56,15 +56,44 @@ class Lexer {
 
 	// symbol = '+' | '-' | '*' | '/' | '%' | '(' | ')'
 	testSymbol() {
-		if ("+-*/%()".includes(this.current)) return true;
+		if ("/%".includes(this.current)) return true;
+		return false
+	}
+
+	testPlus() {
+		if ("+".includes(this.current)) return true;
+		return false
+	}
+
+	testMoins() {
+		if ("-".includes(this.current)) return true;
+		return false
+	}
+
+	testFois() {
+		if ("*".includes(this.current)) return true;
+		return false
+	}
+
+	testOpenParenthese() {
+		if ("(".includes(this.current)) return true;
+		return false
+	}
+
+	testCloseParenthese() {
+		if (")".includes(this.current)) return true;
 		return false
 	}
 
 	parseSymbol() {
-		if (this.testSymbol()) this.consume()
+		if (this.testSymbol()) {this.consume(); this.produce(TokenType.SYMBOL)}
+		else if (this.testPlus()){this.consume(); this.produce(TokenType.PLUS)}
+		else if (this.testMoins()){this.consume(); this.produce(TokenType.MOINS)}
+		else if (this.testFois()){this.consume(); this.produce(TokenType.MULTIPLE)}
+		else if (this.testOpenParenthese()){this.consume(); this.produce(TokenType.PAR_OUVERT)}
+		else if (this.testCloseParenthese()){this.consume(); this.produce(TokenType.PAR_FERME)}
 		else return false
 
-		this.produce(TokenType.SYMBOL)
 		return true
 	}
 
@@ -90,7 +119,8 @@ class Lexer {
 		while (this.parseNumber() || this.parseSymbol() || this.avoidSpace()) {
 			// nothing to do, consume already done in functions
 		}
-
+		this._currentWord = 'eof'
+		this.produce(TokenType.EOF)
 		return this._tokens
 	}
 
